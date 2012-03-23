@@ -3,6 +3,8 @@
 const int FD_IN  = 3;
 const int FD_OUT = 4;
 
+const int BUFFERSIZE = 39;
+
 // read game state from MCP
 //
 // example: "B:bbbbbbbbbbbb--------wwwwwwwwwwww\n"
@@ -52,11 +54,19 @@ void output (char* buffer)
 
 int main()
 {
+    char buffer[BUFFERSIZE];
+
     while (1) {
+        // receive game state from MCP
+        input(buffer);
+
         // program complete, enter when ready
         //
         // TODO write your own player here, have a look at example_player.cc
         // TODO input() and output() to understand the protocol between
         // TODO MCP and your player (receive game state, send move back)
+
+        // send move back to MCP
+        output(buffer);
     }
 }
