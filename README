@@ -1,0 +1,26 @@
+Checkers
+========
+
+- `make help` gives you a brief overview about options
+- know the rules: http://en.wikipedia.org/wiki/English_draughts
+  - 8x8 board, normal pieces move 1 step and jump 2 steps diagonal forward
+  - crowned pieces move 1 and jump 2 steps, but also backwards
+  - jumps must been taken, multiple jumps too
+  - there is a draw timeout after 20 moves when only crowned pieces have moved
+- in order to successfully pass this exercise, you have to make *no* invalid
+  moves, this is a hard limit. Additional your player should win against a
+  random player, but you do not have to play very strong. Typically it
+  suffices if you simply avoid being killed when possible.
+- the master control program (mcp) will alternately send a board to each
+  player and wait for the move in return. After checking the validity it will
+  modify the board accordingly and transfer it to the other player.
+- your task is to start with an empty my_player (rename it to your first
+  name please), have a look at the example how to receive input and where to
+  write the output to. You may copy code from the example_player only, from
+  nowhere else
+- for debugging your player, you might want to start the mcp with '-d', which
+  will have the mcp report invalid moves, but without terminating the match
+- if you want to test your own player with a very specific board, you can
+  specify an initial state by using `mcp -i <state>`
+- please do not hesitate to ask any questions early, this will save you and
+  us time later on
