@@ -3,7 +3,105 @@
 const int FD_IN  = 3;
 const int FD_OUT = 4;
 
-const int BUFFERSIZE = 39;
+const int BUFFERSIZE_IN  = 35;
+const int BUFFERSIZE_OUT = 39;
+const int BUFFERSIZE = BUFFERSIZE_IN < BUFFERSIZE_OUT ? BUFFERSIZE_OUT : BUFFERSIZE_IN;
+
+static void error (const char * fmt, ...)
+{
+    va_list vl;
+    va_start (vl, fmt);
+    vfprintf (stderr, fmt, vl);
+    va_end (vl);
+    exit (-1);
+}
+
+enum Field {
+    NONE  = 0,
+    BLACK = 1,
+    WHITE = 2,
+    KING  = 4,
+    BLACKKING = BLACK | KING,
+    WHITEKING = WHITE | KING,
+};
+
+class Board
+{
+    public:
+        Field field[64];
+
+        Board() { from_string ("bbbbbbbbbbbb--------wwwwwwwwwwww"); }
+
+        Board (Board const & b) { memcpy (&field, &b.field, sizeof(field)); }
+
+        Board (char const* s) { from_string(s); }
+
+        void from_string (char const * const s);
+
+        void to_string (char * s);
+
+        void draw();
+};
+
+void Board::from_string (char const * s)
+{
+    assert (strlen(s) == 32);
+
+    int i = 0;
+    while (s[i]) {
+        Field f = NONE;
+        switch (s[i]) {
+            case 'b' : f = BLACK; break;
+            case 'w' : f = WHITE; break;
+            case 'B' : f = BLACKKING; break;
+            case 'W' : f = WHITEKING; break;
+            case '-' : f = NONE; break;
+            default : error ("unknown char '%c' in input string\n", s[i]);
+        }
+        int j = (i / 4) & 1;
+        field[2*i-j+1] = f;
+        field[2*i+j] = NONE;
+        i++;
+    }
+}
+
+void Board::to_string (char * s)
+{
+    for (int i=0; i<32; i++) {
+        int j = (i / 4) & 1;
+        switch (field[2*i-j+1]) {
+            case BLACK:     s[i] = 'b'; break;
+            case WHITE:     s[i] = 'w'; break;
+            case BLACKKING: s[i] = 'B'; break;
+            case WHITEKING: s[i] = 'W'; break;
+            case NONE:      s[i] = '-'; break;
+            default:        assert (0);
+        }
+        s[32] = 0;
+    }
+}
+
+void Board::draw()
+{
+    for (int i=0; i<64; i++) {
+        if ((i & 7) == 0)
+            printf ("+----+----+----+----+----+----+----+----+\n");
+        char c = ' ';
+        if (field[i] & BLACK) c = 'b';
+        if (field[i] & WHITE) c = 'w';
+        if (field[i] & KING)  c -= 32;
+
+        if (((i & 8) && (i & 1)) || (!(i & 8) && !(i & 1))) {
+            printf ("|    ");
+        } else {
+            printf("|%c%2d%c",c,(i/2)+1,c);
+        }
+
+        if ((i & 7) == 7)
+            printf ("|\n");
+    }
+    printf ("+----+----+----+----+----+----+----+----+\n");
+}
 
 // read game state from MCP
 //
@@ -60,11 +158,10 @@ int main()
         // receive game state from MCP
         input(buffer);
 
-        // program complete, enter when ready
-        //
-        // TODO write your own player here, have a look at example_player.cc
-        // TODO input() and output() to understand the protocol between
-        // TODO MCP and your player (receive game state, send move back)
+        // parse game state
+        Board board(buffer + 2);
+
+        // TODO write your own player here
 
         // send move back to MCP
         output(buffer);
