@@ -1,0 +1,132 @@
+[33mcommit 1492c87c14e033684c04c5bdf9cafbb2e38cb6d7[m
+Author: kratschie <rebecca.kratsch@gmail.com>
+Date:   Mon Mar 26 19:38:50 2012 +0200
+
+    copiled Black player.
+
+[1mdiff --git a/my_player.cc b/my_player.cc[m
+[1mindex fec84ac..e8d4dee 100644[m
+[1m--- a/my_player.cc[m
+[1m+++ b/my_player.cc[m
+[36m@@ -184,8 +184,8 @@[m [mint zeile = field[i] / 8;[m
+ 					if (field[i+9] & NONE){[m
+ 						field[i+9] = BLACK;[m
+ 						spalte = spalte + 1;[m
+[31m-					}else{			  		 [m
+[31m-		  			while (spalte != 7)){[m
+[32m+[m					[32m}else{[m
+[32m+[m		[41m  [m			[32mwhile (spalte != 7){[m
+ 						if ((field[i+9] & WHITE) & (field[i+18] & NONE)){[m
+ 							field[i+18] = BLACK;[m
+ 							i = i + 18;[m
+[36m@@ -231,13 +231,8 @@[m [mint zeile = field[i] / 8;[m
+ 		}[m
+ 	}[m
+ }[m
+[31m-	 [m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+ [m
+[32m+[m[32m}[m[41m	 [m
+ //wenn weiß und spalte 0 bis feld >=5: gehe feld = feld - 4[m
+ // wenn weiß und spalte 1bis feld  >=9 : gehe links: feld = feld -4[m
+ // gehe rechts feld = feld -3[m
+[36m@@ -260,7 +255,7 @@[m [mvoid moeglicherzug_white(){[m
+ [m
+ [m
+ [m
+[31m-int main() {[m
+[32m+[m[32mint main(){[m
+     char buffer[BUFFERSIZE];[m
+     bool black; // bin ich der schwarze Spieler?[m
+ [m
+[36m@@ -270,7 +265,7 @@[m [mint main() {[m
+ [m
+         if (buffer[0] == 'B') {[m
+         	black = true;[m
+[31m-        } else {[m
+[32m+[m[32m        }else{[m
+         	black = false;[m
+         }[m
+         [m
+[1mdiff --git a/my_player.cc~ b/my_player.cc~[m
+[1mindex e3f034a..a99f391 100644[m
+[1m--- a/my_player.cc~[m
+[1m+++ b/my_player.cc~[m
+[36m@@ -184,8 +184,8 @@[m [mint zeile = field[i] / 8;[m
+ 					if (field[i+9] & NONE){[m
+ 						field[i+9] = BLACK;[m
+ 						spalte = spalte + 1;[m
+[31m-					}else{			  		 [m
+[31m-		  			while (spalte != 7)){[m
+[32m+[m					[32m}else{[m
+[32m+[m		[41m  [m			[32mwhile (spalte != 7){[m
+ 						if ((field[i+9] & WHITE) & (field[i+18] & NONE)){[m
+ 							field[i+18] = BLACK;[m
+ 							i = i + 18;[m
+[36m@@ -213,20 +213,25 @@[m [mint zeile = field[i] / 8;[m
+ 				}[m
+ 		    }[m
+ 		    [m
+[31m-		    if (spalte = ([m
+[31m-		    [m
+[31m-		    [m
+[31m-		    		[m
+[32m+[m		[32m    if (spalte == 7){[m
+[32m+[m		[41m    [m	[32mif (field[i+7] != WHITE){[m
+[32m+[m					[32mif (field[i+7] & NONE){[m
+[32m+[m						[32mfield [i+7] = BLACK;[m
+[32m+[m						[32mspalte = spalte - 1;[m
+[32m+[m						[32m}else{[m
+[32m+[m					[32mwhile (spalte == 7){[m
+[32m+[m						[32mif ((field[i+7] & WHITE) & (field[i+14] & NONE)){[m
+[32m+[m						[32mfield[i+14] = BLACK;[m
+[32m+[m						[32mi = i + 14;[m
+[32m+[m						[32mspalte = spalte - 2;[m
+[32m+[m						[32m}[m
+[32m+[m					[32m}[m
+[32m+[m					[32m}[m[41m		[m
+[32m+[m		[32m    }[m[41m		[m
+ 		}[m
+ 	}[m
+ }[m
+ 	 [m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+ //wenn weiß und spalte 0 bis feld >=5: gehe feld = feld - 4[m
+ // wenn weiß und spalte 1bis feld  >=9 : gehe links: feld = feld -4[m
+ // gehe rechts feld = feld -3[m
+[36m@@ -244,12 +249,16 @@[m [mint zeile = field[i] / 8;[m
+ [m
+ void moeglicherzug_white(){[m
+ [m
+[32m+[m[32mint i;[m
+[32m+[m[32mint x;[m
+[32m+[m
+[32m+[m
+ }[m
+ [m
+ [m
+ [m
+ [m
+[31m-int main() {[m
+[32m+[m[32mint main(){[m
+     char buffer[BUFFERSIZE];[m
+     bool black; // bin ich der schwarze Spieler?[m
+ [m
+[36m@@ -259,7 +268,7 @@[m [mint main() {[m
+ [m
+         if (buffer[0] == 'B') {[m
+         	black = true;[m
+[31m-        } else {[m
+[32m+[m[32m        }else{[m
+         	black = false;[m
+         }[m
+         [m

@@ -46,6 +46,8 @@ class Board
         void to_string (char * s);
 
         void draw();
+        
+       
 };
 
 void Board::from_string (char const * s)
@@ -156,7 +158,7 @@ void output (char* buffer)
 }
 
 void moeglicherzug_black(){
-int field[64];
+int field [64];
 int i = 0;
 int spalte = field[i] % 8; // Zustand übergebn lassen vorher
 int zeile = field[i] / 8;
