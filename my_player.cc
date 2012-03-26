@@ -33,7 +33,7 @@ enum Field {
 class Board
 {
     public:
-        Field field[64];
+        Field field[8][8];
 
         Board() { from_string ("bbbbbbbbbbbb--------wwwwwwwwwwww"); }
 
@@ -47,7 +47,7 @@ class Board
 
         void draw();
         
-       
+        void moeglicherzug_black();
 };
 
 void Board::from_string (char const * s)
@@ -157,31 +157,66 @@ void output (char* buffer)
     if (write (FD_OUT, buffer, l) != l) error ("error writing FD_OUT\n");
 }
 
-void moeglicherzug_black(){
-int field [64];
-int i = 0;
-int spalte = field[i] % 8; // Zustand übergebn lassen vorher
-int zeile = field[i] / 8;
-	
-	  //  da in letzter zeile sprünge nach 'unten' nicht mgl 
-	for (i = 0; i < 56; i++){
-		if (field[i] & BLACK){   
-			if (spalte == 0){				
-				if (field[i+9] != WHITE){ // mgl Feld in nächster Zeile nicht weiß
-					if (field[i+9] & NONE){
-						field[i+9] = BLACK; 
-						spalte = spalte + 1;
+// void Board::moeglicherzug_black()...
+
+void Board::moeglicherzug_black(){
+ // zweidimensionales feld, um Problem Rand zu lösen
+int z;
+int s;
+int zug_rechts = 0:
+int zug_links = 0;
+int sprung_rechts = 0;
+int sprung_links = 0;
+char zug[64];
+int bester_zug_wert;
+char bester_zug [64];
+
+	for (z = 0; z < 8; z++){
+		for (s = 0; s < 8; s++){		
+			if (field[z][s] == BLACK){   				
+				if ((s < 7) && (z < 7) && (field[z+1][s+1] != WHITE)){ 
+					if (field[z+1][s+1] == NONE){
+						zug_rechts = 1; 
+						if (bester_zug_wert < zug_rechts){
+							bester_zug_wert = zug_rechts;	     
+						}
 					}else{		
-					while ((field[i+9] & WHITE) & (field[i+18] & NONE)){
-						field[i+18] = BLACK;
-						i = i + 18;
-						spalte = spalte + 2;
+				    while ((s < 7) && (z < 7) && (field[z+1][s+1] == WHITE) && 
+						   (field[z+2][s+2] == NONE))||((s > 1) && (z > 1 ) && 
+						   (field[z+1][s-1] == WHITE) && (field[z+2][s-2] == NONE)){
+						if ((s < 7) && (z < 7) && (field[z+1][s+1] == WHITE) && 
+							(field[z+2][s+2] == NONE)){
+							z = z + 2;
+							s = s + 2;
+							sprung_rechts = sprung_rechts + 1;
+							if (bester_zug_wert < sprung_rechts){
+								bester_zug_wert = sprung_rechts;	     
+						    }
+						}else{
+							((s > 1) && (z > 1 ) && (field[z+1][s-1] == WHITE) && 
+							(field[z+2][s-2] == NONE)){
+							z = z + 2;
+							s = s - 2;
+							sprung_rechts = sprung_links + 1;
+							if (bester_zug_wert < sprung_links){
+								bester_zug_wert = sprung_links;	     
+						    }
+							
+						}
+					   
 					}
-					}
-				}   
-			}	
-			//nach rechts für spalte 1-6 
-			if ((spalte != 0) & (spalte != 7)){
+				}
+			}
+		}
+	}
+}
+					
+					
+					
+	/*				
+						
+				//nach rechts für spalte 1-6 
+				if ((spalte != 0) && (spalte != 7)){
 				if (field[i+9] != WHITE){	
 					if (field[i+9] & NONE){
 						field[i+9] = BLACK;
@@ -249,6 +284,7 @@ int zeile = field[i] / 8;
 // andere Richtungen(links-rechts)
 // wenn anderer stein, checke, ob feld danach frei: springe
 
+*/
 
 void moeglicherzug_white(){
 
@@ -265,20 +301,22 @@ int main(){
         // receive game state from MCP
         input(buffer);
 
+        // parse game state
+        Board board(buffer + 2);
+        
         if (buffer[0] == 'B') {
         	black = true;
         }else{
         	black = false;
         }
         
-        if (black){
-        moeglicherzug_black();
-        }else{
-        moeglicherzug_white();    
+        if (black) {
+          moeglicherzug_black();
+        } else {
+          moeglicherzug_white();    
         }
 
-        // parse game state
-        Board board(buffer + 2);
+        
 
         // TODO write your own player here
 
