@@ -1,4 +1,9 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <assert.h>
 
 const int FD_IN  = 3;
 const int FD_OUT = 4;
@@ -68,8 +73,8 @@ void Board::from_string (char const * s)
 void Board::to_string (char * s)
 {
     for (int i=0; i<32; i++) {
-        int j = (i / 4) & 1;
-        switch (field[2*i-j+1]) {
+        int j = (i / 4) & 1; // 0: Stein in der zweiten Spalte, 1: Stein in der ersten Spalte  ???
+        switch (field[2*i-j+1]) { // Zugriff auf entsprechendes Feld im "0 bis 63" Brett
             case BLACK:     s[i] = 'b'; break;
             case WHITE:     s[i] = 'w'; break;
             case BLACKKING: s[i] = 'B'; break;
@@ -150,13 +155,106 @@ void output (char* buffer)
     if (write (FD_OUT, buffer, l) != l) error ("error writing FD_OUT\n");
 }
 
-int main()
-{
+void moeglicherzug{
+int spalte = field[i] % 8; 
+int zeile = field[i] / 8;
+	
+	  //  da in zeile sprünge nach 'unten' nicht mgl 
+	for (i = 0; i < 56; i++){
+		while (field[i] == black){   // oder & BLACK?
+			if (spalte == 0){
+				
+				if ((field[i+8] != white){
+					if (field[i+8] == NONE){
+						field[i+8] = black; 
+					}else{
+					
+					while ((field[i+8] == white) & (field[i+18] == NONE)){
+						field[i+18] = black;
+						i = i + 18;
+					}
+					}
+				
+				}   
+			}	
+			if (spalte = (spalte % 8) & 1){
+				if (field[i+10] != whilte){	
+					if (field[i+10] == NONE){
+						field[i+10] = black;
+					}else{			
+			   		
+					while ((field[i+10] == white) & (field[i+18] == NONE)){
+						field[i+18] = black;
+						i = i+ 18;
+					}
+					}
+				}	
+			}	
+			if (spalte = (spalte % 8) & !1){
+				if (field[i+10] != white){
+					if (field[i+8] == NONE){
+						field [i+8] = black;
+					}else{
+						while ((field[i+10] == white) & (field[i+18] == NONE)){
+						field[i+18] = black;
+						i = i+ 18;
+					}
+					}
+				}	
+		    }
+			    
+			    
+			
+	}
+	}
+	}
+	} 
+
+//wenn schwarz und spalte 0 und alle zeilen und feld <= 21: 
+//gehe rechts auf feld = feld+ 4, nie links
+//wenn schwarz und spalte 1-6 und alle zeilen und feld <=:27
+//gehe rechts : feld = feld +5
+//für spalte 2: gehe links: feld= feld + 4
+//für spalte 3-6 spalte  : links feld = feld + 3
+//wenn schwarz und spalte 7, feld <= 28: gehe nur links
+//feld = feld +4
+
+
+
+
+//wenn weiß und spalte 0 bis feld >=5: gehe feld = feld - 4
+// wenn weiß und spalte 1bis feld  >=9 : gehe links: feld = feld -4
+// gehe rechts feld = feld -3
+// spalte 2: links: feld = feld - 5
+// rechts: feld = feld - 4
+//spalte 3-6: links: feld = feld - 4
+// rechts: feld = feld - 4
+//spalte 7: nur links: feld= feld -4 
+
+
+// wenn mögliches feld besetzt mit eigenem stein, checke
+// andere Richtungen(links-rechts)
+// wenn anderer stein, checke, ob feld danach frei: springe
+
+
+}
+
+
+
+
+int main() {
     char buffer[BUFFERSIZE];
+    bool black; // bin ich der schwarze Spieler?
 
     while (1) {
         // receive game state from MCP
         input(buffer);
+
+        if (buffer[0] == 'B') {
+        	black = true;
+        } else {
+        	black = false;
+        }
 
         // parse game state
         Board board(buffer + 2);
