@@ -168,46 +168,65 @@ int zeile = field[i] / 8;
 				if (field[i+9] != WHITE){ // mgl Feld in nächster Zeile nicht weiß
 					if (field[i+9] & NONE){
 						field[i+9] = BLACK; 
+						spalte = spalte + 1;
 					}else{		
 					while ((field[i+9] & WHITE) & (field[i+18] & NONE)){
 						field[i+18] = BLACK;
 						i = i + 18;
+						spalte = spalte + 2;
 					}
 					}
 				}   
 			}	
-			//nach rechts für spalte 2-7 
-			if (spalte = (spalte % 8) & 1){
+			//nach rechts für spalte 1-6 
+			if ((spalte != 0) & (spalte != 7)){
 				if (field[i+9] != WHITE){	
 					if (field[i+9] & NONE){
 						field[i+9] = BLACK;
-					}else{			
-			   		//problem rechter rand		  		 
-		  			while (spalte == ((spalte / 8) != 7)){
+						spalte = spalte + 1;
+					}else{			  		 
+		  			while (spalte != 7)){
 						if ((field[i+9] & WHITE) & (field[i+18] & NONE)){
 							field[i+18] = BLACK;
-							i = i+ 18;
+							i = i + 18;
+							spalte = spalte + 2; 
 						}
 					}
 					}
 				}	
 			}	
-			// festlegung linker rand 
 			// nach links für Spalte 2-7
-			if (spalte = (spalte % 8) & !1){
+			if ((spalte != 0) & (spalte != 7) ){
 				if (field[i+7] != WHITE){
 					if (field[i+7] & NONE){
 						field [i+7] = BLACK;
+						spalte = spalte - 1;
 					}else{
-			
-					while (spalte == ((spalte / 8) != 0)){
+					while (spalte != 0){
 						if ((field[i+7] & WHITE) & (field[i+14] & NONE)){
 						field[i+14] = BLACK;
-						i = i+ 14;
+						i = i + 14;
+						spalte = spalte + 2;
 						}
 					}
 					}	
 				}
+		    }
+		    
+		    if (spalte == 7){
+		    	if (field[i+7] != WHITE){
+					if (field[i+7] & NONE){
+						field [i+7] = BLACK;
+						spalte = spalte - 1;
+						}else{
+					while (spalte == 7){
+						if ((field[i+7] & WHITE) & (field[i+14] & NONE)){
+						field[i+14] = BLACK;
+						i = i + 14;
+						spalte = spalte - 2;
+						}
+					}
+					}		
 		    }		
 		}
 	}
