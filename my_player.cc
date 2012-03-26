@@ -155,13 +155,13 @@ void output (char* buffer)
     if (write (FD_OUT, buffer, l) != l) error ("error writing FD_OUT\n");
 }
 
-void moeglicherzug{
-int spalte = field[i] % 8; 
+void moeglicherzug(){
+int spalte = field[i] % 8; // Zustand übergebn lassen vorher
 int zeile = field[i] / 8;
 	
 	  //  da in zeile sprünge nach 'unten' nicht mgl 
 	for (i = 0; i < 56; i++){
-		while (field[i] == black){   // oder & BLACK?
+		if (field[i] & BLACK){   
 			if (spalte == 0){
 				
 				if ((field[i+8] != white){
