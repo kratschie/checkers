@@ -184,8 +184,8 @@ int zeile = field[i] / 8;
 					if (field[i+9] & NONE){
 						field[i+9] = BLACK;
 						spalte = spalte + 1;
-					}else{			  		 
-		  			while (spalte != 7)){
+					}else{
+		  			while (spalte != 7){
 						if ((field[i+9] & WHITE) & (field[i+18] & NONE)){
 							field[i+18] = BLACK;
 							i = i + 18;
@@ -231,13 +231,8 @@ int zeile = field[i] / 8;
 		}
 	}
 }
-	 
 
-
-
-
-
-
+}	 
 //wenn weiß und spalte 0 bis feld >=5: gehe feld = feld - 4
 // wenn weiß und spalte 1bis feld  >=9 : gehe links: feld = feld -4
 // gehe rechts feld = feld -3
@@ -260,7 +255,7 @@ void moeglicherzug_white(){
 
 
 
-int main() {
+int main(){
     char buffer[BUFFERSIZE];
     bool black; // bin ich der schwarze Spieler?
 
@@ -270,7 +265,7 @@ int main() {
 
         if (buffer[0] == 'B') {
         	black = true;
-        } else {
+        }else{
         	black = false;
         }
         
