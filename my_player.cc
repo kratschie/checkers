@@ -159,17 +159,17 @@ void moeglicherzug(){
 int spalte = field[i] % 8; // Zustand übergebn lassen vorher
 int zeile = field[i] / 8;
 	
-	  //  da in zeile sprünge nach 'unten' nicht mgl 
+	  //  da in letzter zeile sprünge nach 'unten' nicht mgl 
 	for (i = 0; i < 56; i++){
 		if (field[i] & BLACK){   
 			if (spalte == 0){
 				
-				if ((field[i+8] != white){
-					if (field[i+8] == NONE){
-						field[i+8] = black; 
+				if (field[i+9] != WHITE){ // mgl Feld in nächster Zeile nicht weiß
+					if (field[i+9] & NONE){
+						field[i+] = BLACK; 
 					}else{
 					
-					while ((field[i+8] == white) & (field[i+18] == NONE)){
+					while ((field[i+9] & WHITE) & (field[i+18] & NONE)){
 						field[i+18] = black;
 						i = i + 18;
 					}
@@ -177,30 +177,43 @@ int zeile = field[i] / 8;
 				
 				}   
 			}	
+			
+			//nach rechts für spalte 2-7 
 			if (spalte = (spalte % 8) & 1){
-				if (field[i+10] != whilte){	
-					if (field[i+10] == NONE){
-						field[i+10] = black;
+				if (field[i+9] != WHITE){	
+					if (field[i+9] & NONE){
+						field[i+9] = BLACK;
 					}else{			
-			   		
-					while ((field[i+10] == white) & (field[i+18] == NONE)){
-						field[i+18] = black;
-						i = i+ 18;
+			   		//problem rechter rand!
+		  		
+		  	while	 
+		  		if (spalte == (spalte / 8 != 7)){
+						if ((field[i+9] & WHITE) & (field[i+18] & NONE)){
+							field[i+18] = BLACK;
+							i = i+ 18;
+						}
 					}
 					}
+				}
 				}	
 			}	
+			// festlegung linker rand 
+			// nach links für Spalte 2-7
 			if (spalte = (spalte % 8) & !1){
-				if (field[i+10] != white){
-					if (field[i+8] == NONE){
-						field [i+8] = black;
+				if (field[i+7] != WHITE){
+					if (field[i+7] & NONE){
+						field [i+7] = BLACK;
 					}else{
-						while ((field[i+10] == white) & (field[i+18] == NONE)){
-						field[i+18] = black;
-						i = i+ 18;
+				while	
+					if (spalte == (spalte / 8 != 0)){
+						if ((field[i+7] & WHITE) & (field[i+14] & NONE)){
+						field[i+14] = black;
+						i = i+ 14;
+						}
 					}
 					}
 				}	
+				}
 		    }
 			    
 			    
