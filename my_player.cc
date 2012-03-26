@@ -155,46 +155,41 @@ void output (char* buffer)
     if (write (FD_OUT, buffer, l) != l) error ("error writing FD_OUT\n");
 }
 
-void moeglicherzug(){
+void moeglicherzug_black(){
+int field[64];
+int i = 0;
 int spalte = field[i] % 8; // Zustand übergebn lassen vorher
 int zeile = field[i] / 8;
 	
 	  //  da in letzter zeile sprünge nach 'unten' nicht mgl 
 	for (i = 0; i < 56; i++){
 		if (field[i] & BLACK){   
-			if (spalte == 0){
-				
+			if (spalte == 0){				
 				if (field[i+9] != WHITE){ // mgl Feld in nächster Zeile nicht weiß
 					if (field[i+9] & NONE){
-						field[i+] = BLACK; 
-					}else{
-					
+						field[i+9] = BLACK; 
+					}else{		
 					while ((field[i+9] & WHITE) & (field[i+18] & NONE)){
-						field[i+18] = black;
+						field[i+18] = BLACK;
 						i = i + 18;
 					}
 					}
-				
 				}   
 			}	
-			
 			//nach rechts für spalte 2-7 
 			if (spalte = (spalte % 8) & 1){
 				if (field[i+9] != WHITE){	
 					if (field[i+9] & NONE){
 						field[i+9] = BLACK;
 					}else{			
-			   		//problem rechter rand!
-		  		
-		  	while	 
-		  		if (spalte == (spalte / 8 != 7)){
+			   		//problem rechter rand		  		 
+		  			while (spalte == ((spalte / 8) != 7)){
 						if ((field[i+9] & WHITE) & (field[i+18] & NONE)){
 							field[i+18] = BLACK;
 							i = i+ 18;
 						}
 					}
 					}
-				}
 				}	
 			}	
 			// festlegung linker rand 
@@ -204,33 +199,22 @@ int zeile = field[i] / 8;
 					if (field[i+7] & NONE){
 						field [i+7] = BLACK;
 					}else{
-				while	
-					if (spalte == (spalte / 8 != 0)){
+			
+					while (spalte == ((spalte / 8) != 0)){
 						if ((field[i+7] & WHITE) & (field[i+14] & NONE)){
-						field[i+14] = black;
+						field[i+14] = BLACK;
 						i = i+ 14;
 						}
 					}
-					}
-				}	
+					}	
 				}
-		    }
-			    
-			    
-			
+		    }		
+		}
 	}
-	}
-	}
-	} 
+}
+	 
 
-//wenn schwarz und spalte 0 und alle zeilen und feld <= 21: 
-//gehe rechts auf feld = feld+ 4, nie links
-//wenn schwarz und spalte 1-6 und alle zeilen und feld <=:27
-//gehe rechts : feld = feld +5
-//für spalte 2: gehe links: feld= feld + 4
-//für spalte 3-6 spalte  : links feld = feld + 3
-//wenn schwarz und spalte 7, feld <= 28: gehe nur links
-//feld = feld +4
+
 
 
 
@@ -250,6 +234,8 @@ int zeile = field[i] / 8;
 // wenn anderer stein, checke, ob feld danach frei: springe
 
 
+void moeglicherzug_white(){
+
 }
 
 
@@ -267,6 +253,12 @@ int main() {
         	black = true;
         } else {
         	black = false;
+        }
+        
+        if (black){
+        moeglicherzug_black();
+        }else{
+        moeglicherzug_white();    
         }
 
         // parse game state
