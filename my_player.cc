@@ -61,7 +61,9 @@ class Board
         bool can_jump_right(int zeile, int spalte);
 
 				bool can_jump_left(int zeile, int spalte);
-};
+				
+				int compare value(int best_draw_value, int draw_value);
+};ZH
 
 void Board::from_string (char const * s)
 {
@@ -186,25 +188,35 @@ bool Board::can_go_left (int zeile, int spalte){
 
 
 bool Board::can_jump_right(int zeile, int spalte){
-	return (((zeile < 6) && (spalte < 6)) && (field2d[zeile+1][spalte+1] == WHITE) && (field2d[zeile+2][spalte+2] == NONE)); 
+	return (((zeile < 6) && (spalte < 6)) && (field2d[zeile+1][spalte+1] == WHITE) && (field2d[zeile
+	+2][spalte+2] == NONE)); 
 }
 
 
 bool Board::can_jump_left(int zeile, int spalte){
-	return (((zeile > 1) && (spalte > 1)) && (field2d[zeile+1][spalte-1] == WHITE) && (field2d[zeile+2][spalte-2] == NONE));
+	return (((zeile > 1) && (spalte > 1)) && (field2d[zeile+1][spalte-1] == WHITE) && (field2d[zeile
+	+2][spalte-2] == NONE));
+}
+
+int Board::compare value(int best_draw_value, int draw_value){
+	if (best_draw_value < draw_value){
+						best_draw_value = draw_value;	     
+	}
+
 }
 
 
 void Board::possible_draw_black(){
 int zeile;
 int spalte;
-int draw_right;
+/*int draw_right;
 int draw_left;
 int jump_right;
-int jump_left;
-char draw[64];
+int jump_left;*/
 int best_draw_value;
 char best_draw [64];
+int draw_value;
+char draw_value [64];
 
 	for (zeile = 0; zeile < 8; zeile++){	
 		for (spalte = 0; spalte < 8; spalte++){	
@@ -212,104 +224,36 @@ char best_draw [64];
 				draw_right = 0;
 				draw_left = 0;
 				jump_right = 0;
-				jump_left = 0;			  				
+				jump_left = 0;
+				best_draw_value = 0;
+				draw_value = 0;			  				
 				if (can_go_right(zeile, spalte)){	
-						draw_right = 1;
-						if (best_draw_value < draw_right){
-							best_draw_value = draw_right;	     
-						}
-					}	
-					if (can_go_left(zeile, spalte)){
-						draw_left = 1;
-						if (best_draw_value < draw_left){
-							best_draw_value = draw_left;	     
-						}
-					}		
-			    while (can_jump_right(zeile, spalte) || can_jump_left(zeile, spalte)){
-						if (can_jump_right(zeile, spalte)){
-							zeile = zeile + 2;
-							spalte = spalte + 2;
-							jump_right = jump_right + 2;
-							if (best_draw_value < jump_right){
-								best_draw_value = jump_right;	     
-							  }
-							}else{
-								if (can_jump_left(zeile, spalte)){
-									zeile = zeile + 2;
-									spalte = spalte - 2;
-									jump_left = jump_left + 2;
-									if (best_draw_value < jump_left){
-										best_draw_value = jump_left;	     
-							    }
-								}
-							}	 	
-						}
-					}
-				}	
-			}	
-		}	
-	
-	
-					
-					
-					
-	/*				
-						
-				//nach rechts für spalte 1-6 
-				if ((spalte != 0) && (spalte != 7)){
-				if (field[i+9] != WHITE){	
-					if (field[i+9] & NONE){
-						field[i+9] = BLACK;
-						spalte = spalte + 1;
-					}else{
-		  			while (spalte != 7){
-						if ((field[i+9] & WHITE) & (field[i+18] & NONE)){
-							field[i+18] = BLACK;
-							i = i + 18;
-							spalte = spalte + 2; 
-						}
-					}
-					}
-				}	
-			}	
-			// nach links für Spalte 2-7
-			if ((spalte != 0) & (spalte != 7) ){
-				if (field[i+7] != WHITE){
-					if (field[i+7] & NONE){
-						field [i+7] = BLACK;
-						spalte = spalte - 1;
-					}else{
-					while (spalte != 0){
-						if ((field[i+7] & WHITE) & (field[i+14] & NONE)){
-						field[i+14] = BLACK;
-						i = i + 14;
-						spalte = spalte + 2;
-						}
-					}
-					}	
+					draw_value = 1;		
+					compare_value(best_draw_value, draw_value)	
 				}
-		    }
-		    
-		    if (spalte == 7){
-		    	if (field[i+7] != WHITE){
-					if (field[i+7] & NONE){
-						field [i+7] = BLACK;
-						spalte = spalte - 1;
-						}else{
-					while (spalte == 7){
-						if ((field[i+7] & WHITE) & (field[i+14] & NONE)){
-						field[i+14] = BLACK;
-						i = i + 14;
-						spalte = spalte - 2;
-						}
-					}
-					}		
-		    }		
-		}
-	}
-}
-
-}	 
+				if (can_go_left(zeile, spalte)){
+					draw_value = 1;
+				  compare_value(best_draw_value, draw_value);
+				}		
+		    while (can_jump_right(zeile, spalte) || can_jump_left(zeile, spalte)){						if 						if (can_jump_right(zeile, spalte)){
+		    		zeile = zeile + 2;
+						spalte = spalte + 2;
+						draw_value = draw_value + 2;
+						compare_value(best_draw_value, draw_value);
+					}else{
+						if (can_jump_left(zeile, spalte)){
+							zeile = zeile + 2;
+							spalte = spalte - 2;
+							draw_value = draw_value + 2;
+							compare_value(best_draw_value, draw_value);	     
+						}	
+					}	 	
+				}
+			}
+		}	
+	}	
+}	
+ 
 //wenn weiß und spalte 0 bis feld >=5: gehe feld = feld - 4
 // wenn weiß und spalte 1bis feld  >=9 : gehe links: feld = feld -4
 // gehe rechts feld = feld -3
@@ -324,7 +268,7 @@ char best_draw [64];
 // andere Richtungen(links-rechts)
 // wenn anderer stein, checke, ob feld danach frei: springe
 
-*/
+
 
 void Board::possible_draw_white(){
 
@@ -334,33 +278,32 @@ void Board::possible_draw_white(){
 
 
 int main(){
-    char buffer[BUFFERSIZE];
-    bool black; // bin ich der schwarze Spieler?
+char buffer[BUFFERSIZE];
+bool black; // bin ich der schwarze Spieler?
 
-    while (1) {
-        // receive game state from MCP
-        input(buffer);
+	while (1) {
+    // receive game state from MCP
+    input(buffer);
 
-        // parse game state, füllt Board.field
-        Board board(buffer + 2);
+    // parse game state, füllt Board.field
+    Board board(buffer + 2);
         
-        if (buffer[0] == 'B') {
-        	black = true;
-        }else{
-        	black = false;
-        }
+    if (buffer[0] == 'B') {
+    	black = true;
+    }else{
+    	black = false;
+    }
         
-        if (black) {
-          board.possible_draw_black();
-        } else {
-          board.possible_draw_white();    
-        }
+    if (black) {
+      board.possible_draw_black();
+    }else{
+      board.possible_draw_white();    
+    }
 
-        
-
+       
         // TODO write your own player here
 
         // send move back to MCP
-        output(buffer);
-    }
+    output(buffer);
+  }
 }
