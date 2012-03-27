@@ -33,7 +33,9 @@ enum Field {
 class Board
 {
     public:
-        Field field[8][8];
+        Field field[64];
+        
+        Field field2d[8][8];
 
         Board() { from_string ("bbbbbbbbbbbb--------wwwwwwwwwwww"); }
 
@@ -47,7 +49,18 @@ class Board
 
         void draw();
         
-        void moeglicherzug_black();
+        void possible_draw_black();
+        
+        void possible_draw_white();
+        
+    private:
+        bool can_go_right(int zeile, int spalte);
+        
+        bool can_go_left(int zeile, int spalte);
+        
+        bool can_jump_right(int zeile, int spalte);
+
+				bool can_jump_left(int zeile, int spalte);
 };
 
 void Board::from_string (char const * s)
@@ -68,6 +81,10 @@ void Board::from_string (char const * s)
         int j = (i / 4) & 1;
         field[2*i-j+1] = f;
         field[2*i+j] = NONE;
+        
+        field2d[i / 4][(i % 4) - j + 1] = f;
+        field2d[i / 4][(i % 4) + j] = NONE;
+        
         i++;
     }
 }
@@ -157,59 +174,83 @@ void output (char* buffer)
     if (write (FD_OUT, buffer, l) != l) error ("error writing FD_OUT\n");
 }
 
-// void Board::moeglicherzug_black()...
 
-void Board::moeglicherzug_black(){
- // zweidimensionales feld, um Problem Rand zu lösen
+bool Board::can_go_right(int zeile, int spalte){
+  return (((zeile < 7) && (spalte < 7)) && ((field2d[zeile+1][spalte+1] != WHITE)) &&(field2d[zeile+1][spalte+1] == NONE));
+}
+
+
+bool Board::can_go_left (int zeile, int spalte){
+	return (((zeile > 0) && (spalte > 0)) && (field2d[zeile+1][spalte-1] != WHITE) && (field2d[zeile+1][spalte-1] == NONE)); 
+}
+
+
+bool Board::can_jump_right(int zeile, int spalte){
+	return (((zeile < 6) && (spalte < 6)) && (field2d[zeile+1][spalte+1] == WHITE) && (field2d[zeile+2][spalte+2] == NONE)); 
+}
+
+
+bool Board::can_jump_left(int zeile, int spalte){
+	return (((zeile > 1) && (spalte > 1)) && (field2d[zeile+1][spalte-1] == WHITE) && (field2d[zeile+2][spalte-2] == NONE));
+}
+
+
+void Board::possible_draw_black(){
 int zeile;
 int spalte;
-int zug_rechts = 0:
-int zug_links = 0;
-int sprung_rechts = 0;
-int sprung_links = 0;
-char zug[64];
-int bester_zug_wert;
-char bester_zug [64];
+int draw_right;
+int draw_left;
+int jump_right;
+int jump_left;
+char draw[64];
+int best_draw_value;
+char best_draw [64];
 
-	for (z = 0; z < 8; z++){
-		for (s = 0; s < 8; s++){		
-			if (field[z][s] == BLACK){   				
-				if ((s < 7) && (z < 7) && (field[z+1][s+1] != WHITE)){ 
-					if (field[z+1][s+1] == NONE){
-						zug_rechts = 1; 
-						if (bester_zug_wert < zug_rechts){
-							bester_zug_wert = zug_rechts;	     
+	for (zeile = 0; zeile < 8; zeile++){	
+		for (spalte = 0; spalte < 8; spalte++){	
+			if (field2d[zeile][spalte] == BLACK){	
+				draw_right = 0;
+				draw_left = 0;
+				jump_right = 0;
+				jump_left = 0;
+				best_draw_value;			  				
+				if (can_go_right(zeile, spalte)){	
+						draw_right = 1;
+						if (best_draw_value < draw_right){
+							best_draw_value = draw_right;	     
 						}
-					}else{		
-				    while ((s < 7) && (z < 7) && (field[z+1][s+1] == WHITE) && 
-						   (field[z+2][s+2] == NONE))||((s > 1) && (z > 1 ) && 
-						   (field[z+1][s-1] == WHITE) && (field[z+2][s-2] == NONE)){
-						if ((s < 7) && (z < 7) && (field[z+1][s+1] == WHITE) && 
-							(field[z+2][s+2] == NONE)){
-							z = z + 2;
-							s = s + 2;
-							sprung_rechts = sprung_rechts + 1;
-							if (bester_zug_wert < sprung_rechts){
-								bester_zug_wert = sprung_rechts;	     
-						    }
-						}else{
-							((s > 1) && (z > 1 ) && (field[z+1][s-1] == WHITE) && 
-							(field[z+2][s-2] == NONE)){
-							z = z + 2;
-							s = s - 2;
-							sprung_rechts = sprung_links + 1;
-							if (bester_zug_wert < sprung_links){
-								bester_zug_wert = sprung_links;	     
-						    }
-							
+					}	
+					if (can_go_left(zeile, spalte)){
+						draw_left = 1;
+						if (best_draw_value < draw_left){
+							best_draw_value = draw_left;	     
 						}
-					   
+					}		
+			    while (can_jump_right(zeile, spalte) || can_jump_left(zeile, spalte)){
+						if (can_jump_right(zeile, spalte)){
+							zeile = zeile + 2;
+							spalte = spalte + 2;
+							jump_right = jump_right + 2;
+							if (best_draw_value < jump_right){
+								best_draw_value = jump_right;	     
+							  }
+							}else{
+								if (can_jump_left(zeile, spalte)){
+									zeile = zeile + 2;
+									spalte = spalte - 2;
+									jump_left = jump_left + 2;
+									if (best_draw_value < jump_left){
+										best_draw_value = jump_left;	     
+							    }
+								}
+							}	 	
+						}
 					}
-				}
-			}
-		}
-	}
-}
+				}	
+			}	
+		}	
+	
+	
 					
 					
 					
@@ -286,7 +327,7 @@ char bester_zug [64];
 
 */
 
-void moeglicherzug_white(){
+void Board::possible_draw_white(){
 
 }
 
@@ -301,7 +342,7 @@ int main(){
         // receive game state from MCP
         input(buffer);
 
-        // parse game state
+        // parse game state, füllt Board.field
         Board board(buffer + 2);
         
         if (buffer[0] == 'B') {
@@ -311,9 +352,9 @@ int main(){
         }
         
         if (black) {
-          moeglicherzug_black();
+          board.possible_draw_black();
         } else {
-          moeglicherzug_white();    
+          board.possible_draw_white();    
         }
 
         
