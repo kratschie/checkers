@@ -12,6 +12,10 @@ const int BUFFERSIZE_IN  = 35;
 const int BUFFERSIZE_OUT = 39;
 const int BUFFERSIZE = BUFFERSIZE_IN < BUFFERSIZE_OUT ? BUFFERSIZE_OUT : BUFFERSIZE_IN;
 
+int damefeld(int zeile, int spalte) {
+  return zeile * 4 + (spalte  / 2) + 1;
+}
+
 static void error (const char * fmt, ...)
 {
     va_list vl;
@@ -36,6 +40,8 @@ class Board
         Field field[64];
         
         Field field2d[8][8];
+        
+        best_draw;
 
         Board() { from_string ("bbbbbbbbbbbb--------wwwwwwwwwwww"); }
 
@@ -48,6 +54,8 @@ class Board
         void to_string (char * s);
 
         void draw();
+        
+        void draw2d();
         
         void possible_draw_black();
         
@@ -62,8 +70,8 @@ class Board
 
 				bool can_jump_left(int zeile, int spalte);
 				
-				int compare value(int best_draw_value, int draw_value);
-};ZH
+				int compare_value(int best_draw_value, int draw_value);
+};
 
 void Board::from_string (char const * s)
 {
@@ -84,8 +92,8 @@ void Board::from_string (char const * s)
         field[2*i-j+1] = f;
         field[2*i+j] = NONE;
         
-        field2d[i / 4][(i % 4) - j + 1] = f;
-        field2d[i / 4][(i % 4) + j] = NONE;
+        field2d[i / 4][(i % 4) * 2 - j + 1] = f;
+        field2d[i / 4][(i % 4) * 2 + j] = NONE;
         
         i++;
     }
@@ -127,6 +135,17 @@ void Board::draw()
             printf ("|\n");
     }
     printf ("+----+----+----+----+----+----+----+----+\n");
+}
+
+void Board::draw2d() {
+  printf("field2d, mehrdimensionales Array\n");
+  
+  for (int zeile = 0; zeile < 8; zeile++) {
+    for (int spalte = 0; spalte < 8; spalte++) {
+      printf("%i ", field2d[zeile][spalte]);
+    }
+    printf("\n");
+  }
 }
 
 // read game state from MCP
@@ -198,7 +217,8 @@ bool Board::can_jump_left(int zeile, int spalte){
 	+2][spalte-2] == NONE));
 }
 
-int Board::compare value(int best_draw_value, int draw_value){
+// erweitern: wenn der neue Zug besser ist, muss strcpy(best_draw, draw) gemacht werden, braucht also hier noch diese Parameter
+int Board::compare_value(int best_draw_value, int draw_value){
 	if (best_draw_value < draw_value){
 						best_draw_value = draw_value;	     
 	}
@@ -209,52 +229,80 @@ int Board::compare value(int best_draw_value, int draw_value){
 void Board::possible_draw_black(){
 int zeile;
 int spalte;
+int i;
 /*int draw_right;
 int draw_left;
 int jump_right;
 int jump_left;*/
-int best_draw_value;
-char best_draw [64];
-int draw_value;
-char draw_value [64];
+int best_draw_value = 0; // Wert / Güte von bestem Zug
+char best_draw[64]; // String für besten Zug, z.B. "13x17-21..."
+int draw_value; // Wert / Güte des aktuellen Zugs
+char draw[64]; // String für aktuellen Zug, der spekulativ gemacht wird
+int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgeschnitten werden können
 
+  best_draw[0] = '\0';
+  
 	for (zeile = 0; zeile < 8; zeile++){	
 		for (spalte = 0; spalte < 8; spalte++){	
-			if (field2d[zeile][spalte] == BLACK){	
-				draw_right = 0;
-				draw_left = 0;
-				jump_right = 0;
-				jump_left = 0;
-				best_draw_value = 0;
-				draw_value = 0;			  				
-				if (can_go_right(zeile, spalte)){	
-					draw_value = 1;		
-					compare_value(best_draw_value, draw_value)	
-				}
-				if (can_go_left(zeile, spalte)){
-					draw_value = 1;
-				  compare_value(best_draw_value, draw_value);
-				}		
-		    while (can_jump_right(zeile, spalte) || can_jump_left(zeile, spalte)){						if 						if (can_jump_right(zeile, spalte)){
-		    		zeile = zeile + 2;
-						spalte = spalte + 2;
-						draw_value = draw_value + 2;
-						compare_value(best_draw_value, draw_value);
-					}else{
-						if (can_jump_left(zeile, spalte)){
-							zeile = zeile + 2;
-							spalte = spalte - 2;
+		
+		    char buf[5]; // Puffer für Umformungen von Zahlen in Strings mittels itoa(..)
+				if (field2d[zeile][spalte] == BLACK){	
+					draw_value = 0;
+					
+					sprintf(buf, "%d", damefeld(zeile, spalte));
+					
+					draw[0] = '\0';
+					strcat(draw, buf); // Zug beginnt mit aktuellem Feld
+					speculate_from = strlen(draw); // Startfeld ist immer fest
+				  				
+					if (can_go_right(zeile, spalte)){	
+						draw_value = 1;		
+						
+						sprintf(buf, "%d", damefeld(zeile + 1, spalte + 1));
+						strcat(draw, "-");
+						strcat(draw, buf);
+						
+						printf("mgl. Zug rechts für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);
+						
+						compare_value(best_draw_value, draw_value);	
+					}
+					
+					if (can_go_left(zeile, spalte)){
+						draw_value = 1;
+					  
+					  draw[speculate_from] = '\0';
+					  sprintf(buf, "%d", damefeld(zeile + 1, spalte - 1));
+					  strcat(draw, "-");
+					  strcat(draw, buf);
+					  
+					  printf("mgl. Zug links für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);
+					  
+					  compare_value(best_draw_value, draw_value);
+					}	
+		    	while (can_jump_right(zeile, spalte) || can_jump_left(zeile, spalte)) {
+		    	  printf("TRYING TO JUMP from (%i, %i) / %i ...", zeile, spalte, damefeld(zeile, spalte)); 
+		    		if (can_jump_right(zeile, spalte)){
+		    			zeile = zeile + 2;
+							spalte = spalte + 2;
 							draw_value = draw_value + 2;
-							compare_value(best_draw_value, draw_value);	     
-						}	
-					}	 	
+							compare_value(best_draw_value, draw_value);
+							// draw ab speculate_from löschen (siehe oben), Züge entsprechend anfügen
+							// speculate_from = strlen(draw)
+						}else{
+							if (can_jump_left(zeile, spalte)){ // kann weg
+								zeile = zeile + 2;
+								spalte = spalte - 2;
+								draw_value = draw_value + 2;
+								compare_value(best_draw_value, draw_value);	     
+							}	
+						}	 	
+					}
 				}
-			}
-		}	
+			}	
+		}
 	}	
-}	
- 
-//wenn weiß und spalte 0 bis feld >=5: gehe feld = feld - 4
+ 	
+//wenn w	eiß und spalte 0 bis feld >=5: gehe feld = feld - 4
 // wenn weiß und spalte 1bis feld  >=9 : gehe links: feld = feld -4
 // gehe rechts feld = feld -3
 // spalte 2: links: feld = feld - 5
@@ -277,6 +325,7 @@ void Board::possible_draw_white(){
 
 
 
+
 int main(){
 char buffer[BUFFERSIZE];
 bool black; // bin ich der schwarze Spieler?
@@ -287,6 +336,8 @@ bool black; // bin ich der schwarze Spieler?
 
     // parse game state, füllt Board.field
     Board board(buffer + 2);
+    board.draw();
+    board.draw2d();
         
     if (buffer[0] == 'B') {
     	black = true;
@@ -304,6 +355,7 @@ bool black; // bin ich der schwarze Spieler?
         // TODO write your own player here
 
         // send move back to MCP
-    output(buffer);
+        // das muss natürlich nicht mehr "buffer" sondern "best_draw" sein
+    output(Board.best_draw);
   }
 }
