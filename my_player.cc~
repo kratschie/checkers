@@ -241,14 +241,14 @@ bool Board::can_go_left_up(int zeile, int spalte){
 }
 
 
-bool Board::can_jump_right_up(int zeile, int spalte){
+bool Board::can_jump_right_up(int zeile, int spalte, Field color){
 	return (((zeile > 1) && (spalte < 6)) && (field2d[zeile-1][spalte+1] == BLACK) && (field2d[zeile
 	-2][spalte+2] == NONE)); 
 }
 
 
-bool Board::can_jump_left_up(int zeile, int spalte){
-	return (((zeile > 1) && (spalte > 1)) && (field2d[zeile-1][spalte-1] == BLACK) && (field2d[zeile
+bool Board::can_jump_left_up(int zeile, int spalte, Field color){
+	return (((zeile > 1) && (spalte > 1)) && (field2d[zeile-1][spalte-1] == color) && (field2d[zeile
 	-2][spalte-2] == NONE));
 }
 
