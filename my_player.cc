@@ -211,12 +211,12 @@ void output (char* buffer)
 
 
 bool Board::can_go_right_down(int zeile, int spalte){
-  return (((zeile < 7) && (spalte < 7)) && ((field2d[zeile+1][spalte+1] != WHITE)) &&(field2d[zeile+1][spalte+1] == NONE));
+  return (((zeile < 7) && (spalte < 7)) &&(field2d[zeile+1][spalte+1] == NONE));
 }
 
 
 bool Board::can_go_left_down(int zeile, int spalte){
-	return (((zeile < 7) && (spalte > 0)) && (field2d[zeile+1][spalte-1] != WHITE) && (field2d[zeile+1][spalte-1] == NONE)); 
+	return (((zeile < 7) && (spalte > 0)) && (field2d[zeile+1][spalte-1] == NONE)); 
 }
 
 
@@ -232,23 +232,23 @@ bool Board::can_jump_left_down(int zeile, int spalte){
 }
 
 bool Board::can_go_right_up(int zeile, int spalte){
-  return (((zeile > 0 ) && (spalte < 7)) && (field2d[zeile-1][spalte+1] != BLACK) &&(field2d[zeile-1][spalte+1] == NONE));
+  return (((zeile > 0 ) && (spalte < 7)) &&(field2d[zeile-1][spalte+1] == NONE));
 }
 
 
 bool Board::can_go_left_up(int zeile, int spalte){
-	return (((zeile > 0) && (spalte > 0)) && (field2d[zeile-1][spalte-1] != BLACK) && (field2d[zeile-1][spalte-1] == NONE)); 
+	return (((zeile > 0) && (spalte > 0)) && (field2d[zeile-1][spalte-1] == NONE)); 
 }
 
 
-bool Board::can_jump_right_up(int zeile, int spalte){
+bool Board::can_jump_right_up(int zeile, int spalte, Field color){
 	return (((zeile > 1) && (spalte < 6)) && (field2d[zeile-1][spalte+1] == BLACK) && (field2d[zeile
 	-2][spalte+2] == NONE)); 
 }
 
 
-bool Board::can_jump_left_up(int zeile, int spalte){
-	return (((zeile > 1) && (spalte > 1)) && (field2d[zeile+1][spalte-1] == BLACK) && (field2d[zeile
+bool Board::can_jump_left_up(int zeile, int spalte, Field color){
+	return (((zeile > 1) && (spalte > 1)) && (field2d[zeile-1][spalte-1] == color) && (field2d[zeile
 	-2][spalte-2] == NONE));
 }
 
@@ -259,7 +259,7 @@ void Board::compare_value(int *best_draw_value, int *draw_value, char *best_draw
 		strcpy(best_draw, draw);
 		strcat(best_draw, "\n");								     
 	}
-	printf("Best move is now %s.\n", best_draw);
+	printf("Best move is now %s", best_draw);
 }
 /*
 void turning_black_king(int zeile, int spalte){
@@ -405,7 +405,9 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 
 void Board::possible_draw_white(){
 int zeile;
+int hilfszeile;
 int spalte;
+int hilfsspalte;
 int best_draw_value = 0; // Wert von bestem Zug
 int draw_value; // Wert  des aktuellen Zugs
 char draw[64]; // String für aktuellen Zug, der spekulativ gemacht wird
@@ -414,7 +416,8 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
   best_draw[0] = '\0';
   
 	for (zeile = 0; zeile < 8; zeile++){	
-		for (spalte = 0; spalte < 8; spalte++){	
+		for (spalte = 0; spalte < 8; spalte++){
+		  //printf("Inspecting (%i, %i) ...\n", zeile, spalte);	
 	    char buf[5]; // Puffer für Umformungen von Zahlen in Strings 
 			if (field2d[zeile][spalte] == WHITE){	
 				draw_value = 0;		
@@ -427,7 +430,7 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 					sprintf(buf, "%d", damefeld(zeile - 1, spalte + 1));
 					strcat(draw, "-");
 					strcat(draw, buf);	
-					printf("mgl. Zug rechts für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw
+					printf("mgl. Zug rechts für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);
 					compare_value(&best_draw_value, &draw_value, best_draw, draw);
 					//turning_white_king(zeile, spalte);	
 				}
@@ -440,9 +443,11 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 				  printf("mgl. Zug links für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);
 					compare_value(&best_draw_value, &draw_value, best_draw, draw);
 					//turning_white_king(zeile, spalte);
-				}	
+				}
+				hilfszeile = zeile;
+				hilfsspalte = spalte;	
 		    while (can_jump_right_up(hilfszeile, hilfsspalte) || can_jump_left_up(hilfszeile, hilfsspalte)) {
-	    	  printf("TRYING TO JUMP from (%i, %i) / %i ...%s\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
+	    	  printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
 	    		if (can_jump_right_up(hilfszeile, hilfsspalte)){
 	    			hilfszeile = hilfszeile - 2;
 						hilfsspalte = hilfsspalte + 2;
@@ -482,7 +487,8 @@ bool black; // bin ich der schwarze Spieler?
     // receive game state from MCP
     input(buffer);
 
-    // parse game state, füllt Board.field    Board board(buffer + 2);
+    // parse game state, füllt Board.field  
+    Board board(buffer + 2);
     board.draw();
     board.draw2d();
         
@@ -496,8 +502,8 @@ bool black; // bin ich der schwarze Spieler?
       board.possible_draw_black();
       printf("Tried all possible moves for black.\n");
     }else{
-     // board.possible_draw_white();
-     // printf("Tried all possible moves for white.\n");
+      board.possible_draw_white();
+      printf("Tried all possible moves for white.\n");
     }
 
        
