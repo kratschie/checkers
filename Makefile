@@ -26,6 +26,15 @@ r run : mcp example_player rebecca_kratsch
 f fight : mcp rebecca_kratsch	
 	./mcp -t 60 -T 61 -m 1024 -M 1024 rebecca_kratsch rebecca_kratsch
 
+benjamin1 : mcp rebecca_kratsch
+	./mcp -t 60 -T 61 -m 1024 -M 1024 -i "B:--------B----w------------------" rebecca_kratsch rebecca_kratsch
+
+benjamin2 : mcp rebecca_kratsch
+	./mcp -t 60 -T 61 -m 1024 -M 1024 -i "W:------------------------bb--W---" rebecca_kratsch rebecca_kratsch
+
+benjamin3 : mcp rebecca_kratsch
+	./mcp -t 60 -T 61 -m 1024 -M 1024 -i "B:-B---ww------ww-----------------" rebecca_kratsch rebecca_kratsch
+
 cl clean :
 	rm -f $(TARGETS) *.o
 
