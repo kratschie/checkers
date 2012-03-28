@@ -41,7 +41,7 @@ class Board
         
         Field field2d[8][8];
         
-        char best_draw;
+        char best_draw[64];
 
         Board() { from_string ("bbbbbbbbbbbb--------wwwwwwwwwwww"); }
 
@@ -70,7 +70,7 @@ class Board
 
 				bool can_jump_left(int zeile, int spalte);
 				
-				int compare_value(int *best_draw_value, int *draw_value, char best_draw[64], char draw[64]);
+				int compare_value(int *best_draw_value, int *draw_value, char *best_draw, char *draw);
 };
 
 void Board::from_string (char const * s)
@@ -217,14 +217,15 @@ bool Board::can_jump_left(int zeile, int spalte){
 	+2][spalte-2] == NONE));
 }
 
-// erweitern: wenn der neue Zug besser ist, muss strcpy(best_draw, draw) gemacht werden, braucht also hier noch diese Parameter
-int Board::compare_value(int *best_draw_value, int *draw_value,char best_draw[64], char draw[64]){
-	if (*best_draw_value < *draw_value){
-						*best_draw_value = *draw_value;	
-									     
+
+// Parameter best_draw kann raus, die Funktion kann ja direkt darauf zugreifen
+int Board::compare_value(int *best_draw_value, int *draw_value, char *best_draw, char *draw){
+	if (*best_draw_value < *draw_value) {
+		*best_draw_value = *draw_value;
+		strcpy(best_draw, draw);
+		strcat(best_draw, "\n");								     
 	}
-	
- strcpy(best_draw, draw);
+	printf("Best move is now %s.\n", best_draw);
 }
 
 
@@ -233,7 +234,6 @@ int zeile;
 int spalte;
 //int i;
 int best_draw_value = 0; // Wert / Güte von bestem Zug
-char best_draw[64]; // String für besten Zug, z.B. "13x17-21..."
 int draw_value; // Wert / Güte des aktuellen Zugs
 char draw[64]; // String für aktuellen Zug, der spekulativ gemacht wird
 int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgeschnitten werden können
@@ -286,7 +286,7 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 							
 							draw[speculate_from] = '\0';
 							sprintf(buf, "%d", damefeld(zeile + 2, spalte + 2));
-							strcat(draw, "X");
+							strcat(draw, "x");
 							strcat(draw, buf);
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);
 							// draw ab speculate_from löschen (siehe oben), Züge entsprechend anfügen
@@ -295,11 +295,12 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 							zeile = zeile + 2;
 							spalte = spalte - 2;
 							draw_value = draw_value + 2;
-							compare_value(&best_draw_value, &draw_value, best_draw, draw);	
 							draw[speculate_from] = '\0';
 							sprintf(buf, "%d", damefeld(zeile + 2, spalte + 2));
-							strcat(draw, "X");
-							strcat(draw, buf);     
+							strcat(draw, "x");
+							strcat(draw, buf);  
+							compare_value(&best_draw_value, &draw_value, best_draw, draw);	
+							speculate_from = strlen(draw);   
 							}	
 						}	 	
 					}
@@ -352,8 +353,10 @@ bool black; // bin ich der schwarze Spieler?
         
     if (black) {
       board.possible_draw_black();
+      printf("Tried all possible moves for black.\n");
     }else{
-      board.possible_draw_white();    
+      board.possible_draw_white();
+      printf("Tried all possible moves for white.\n");
     }
 
        
@@ -361,6 +364,7 @@ bool black; // bin ich der schwarze Spieler?
 
         // send move back to MCP
         // das muss natürlich nicht mehr "buffer" sondern "best_draw" sein
-    output(buffer);
+    printf("Sending move %s.\n", board.best_draw);
+    output(board.best_draw);
   }
 }

@@ -21,10 +21,13 @@ d demo : mcp example_player
 	./mcp -d example_player example_player
 
 r run : mcp example_player my_player
-	./mcp -d -r0 -R0 -s10 -S11 my_player example_player
+	./mcp -d -r0 -R0 -s10 -S11 example_player my_player
 
 f fight : mcp my_player
 	./mcp -t 60 -T 61 -m 1024 -M 1024 my_player my_player
+
+m myblack : mcp example_player my_player
+  ./mcp -d -r0 -R0 -s10 -S11 my_player example_player
 
 cl clean :
 	rm -f $(TARGETS) *.o
