@@ -16,8 +16,7 @@ int damefeld(int zeile, int spalte) {
   return zeile * 4 + (spalte  / 2) + 1;
 }
 
-static void error (const char * fmt, ...)
-{
+static void error (const char * fmt, ...) {
     va_list vl;
     va_start (vl, fmt);
     vfprintf (stderr, fmt, vl);
@@ -34,8 +33,7 @@ enum Field {
     WHITEKING = WHITE | KING,
 };
 
-class Board
-{
+class Board {
     public:
         Field field[64];
         
@@ -61,8 +59,6 @@ class Board
         
         void possible_draw_white();
         
-
-        
     private:
         bool can_go_right_down(int zeile, int spalte);
         
@@ -82,7 +78,7 @@ class Board
 				
 				void compare_value(int *best_draw_value, int *draw_value, char *best_draw, char *draw);
 				
-			//	void copy_field(Field original[8][8], Field copy[8][8]);		
+			  void copy_field(Field original[8][8], Field copy[8][8]);		
 };
 
 void Board::from_string (char const * s) {
@@ -189,22 +185,18 @@ void output (char* buffer) {
   if (write (FD_OUT, buffer, l) != l) error ("error writing FD_OUT\n");
 }
 
-
 bool Board::can_go_right_down(int zeile, int spalte) {
   return (((zeile < 7) && (spalte < 7)) &&(field2d[zeile+1][spalte+1] == NONE));
 }
-
 
 bool Board::can_go_left_down(int zeile, int spalte) {
 	return (((zeile < 7) && (spalte > 0)) && (field2d[zeile+1][spalte-1] == NONE)); 
 }
 
-
 bool Board::can_jump_right_down(int zeile, int spalte, Field color) {
 	return (((zeile < 6) && (spalte < 6)) && (field2d[zeile+1][spalte+1] & color) && (field2d[zeile
 	+2][spalte+2] == NONE)); 
 }
-
 
 bool Board::can_jump_left_down(int zeile, int spalte, Field color) {
 	return (((zeile < 6) && (spalte > 1)) && (field2d[zeile+1][spalte-1] & color) && (field2d[zeile
@@ -215,23 +207,19 @@ bool Board::can_go_right_up(int zeile, int spalte) {
   return (((zeile > 0 ) && (spalte < 7)) &&(field2d[zeile-1][spalte+1] == NONE));
 }
 
-
 bool Board::can_go_left_up(int zeile, int spalte) {
 	return (((zeile > 0) && (spalte > 0)) && (field2d[zeile-1][spalte-1] == NONE)); 
 }
-
 
 bool Board::can_jump_right_up(int zeile, int spalte, Field color) {
 	return (((zeile > 1) && (spalte < 6)) && (field2d[zeile-1][spalte+1] & color) && (field2d[zeile
 	-2][spalte+2] == NONE)); 
 }
 
-
 bool Board::can_jump_left_up(int zeile, int spalte, Field color) {
 	return (((zeile > 1) && (spalte > 1)) && (field2d[zeile-1][spalte-1] & color) && (field2d[zeile
 	-2][spalte-2] == NONE));
 }
-
 
 void Board::compare_value(int *best_draw_value, int *draw_value, char *best_draw, char *draw) {
 	if (*best_draw_value < *draw_value) {
@@ -242,7 +230,7 @@ void Board::compare_value(int *best_draw_value, int *draw_value, char *best_draw
 	printf("Best move is now %s", best_draw);
 }
 
-/*void Board::copy_field(Field original[8][8], Field copy[8][8]){
+void Board::copy_field(Field original[8][8], Field copy[8][8]){
 	for (int zeile = 0; zeile < 8; zeile++) {
 		for (int spalte = 0; spalte < 8; spalte++) {
 			copy[zeile][spalte] = original[zeile][spalte];		
@@ -250,18 +238,18 @@ void Board::compare_value(int *best_draw_value, int *draw_value, char *best_draw
 	}
 }
 
-*/
-void Board::possible_draw_black() {
-int zeile;
-int hilfszeile;
-int spalte;
-int hilfsspalte;
-int best_draw_value = 0; // Wert von bestem Zug
-int draw_value; // Wert  des aktuellen Zugs
-char draw[64]; // String für aktuellen Zug, der spekulativ gemacht wird
-int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgeschnitten werden können
 
-best_draw[0] = '\0';
+void Board::possible_draw_black() {
+	int zeile;
+	int hilfszeile;
+	int spalte;
+	int hilfsspalte;
+	int best_draw_value = 0; // Wert von bestem Zug
+	int draw_value; // Wert  des aktuellen Zugs
+	char draw[64]; // String für aktuellen Zug, der spekulativ gemacht wird
+	int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgeschnitten werden können
+
+	best_draw[0] = '\0';
   
 	for (zeile = 0; zeile < 8; zeile++) {	
 		for (spalte = 0; spalte < 8; spalte++) {		
@@ -308,7 +296,6 @@ best_draw[0] = '\0';
 							strcat(draw, "x");
 							strcat(draw, buf);
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);
-							// draw ab speculate_from löschen, Züge entsprechend anfügen
 							speculate_from = strlen(draw);
 				
 						} else {
@@ -374,8 +361,8 @@ best_draw[0] = '\0';
 					hilfszeile = zeile;
 					hilfsspalte = spalte;
 					
-					//Field original[8][8];
-					//copy_field(field2d, original);
+					Field original[8][8];
+					copy_field(field2d, original);
 	  	  	
     			while (can_jump_right_down(hilfszeile, hilfsspalte, WHITE) || can_jump_left_down(hilfszeile, hilfsspalte, WHITE) || can_jump_right_up(hilfszeile, hilfsspalte, WHITE)||can_jump_left_up(hilfszeile, hilfsspalte, WHITE)) {
     		  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
@@ -383,7 +370,6 @@ best_draw[0] = '\0';
     		   
     				if (can_jump_right_down(hilfszeile, hilfsspalte, WHITE)) {
     				  field2d[hilfszeile + 1][hilfsspalte + 1] = NONE;
-    				 // field2d[hilfszeile + 2][hilfsspalte + 2] = BLACKKING;
     				  field2d[hilfszeile][hilfsspalte] = NONE;
     					hilfszeile = hilfszeile + 2;
 							hilfsspalte = hilfsspalte + 2;
@@ -393,13 +379,11 @@ best_draw[0] = '\0';
 							strcat(draw, "x");
 							strcat(draw, buf);
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);
-							// draw ab speculate_from löschen, Züge entsprechend anfügen
 							speculate_from = strlen(draw);
 						}
 					
 						if (can_jump_left_down(hilfszeile, hilfsspalte, WHITE)) {
 						  field2d[hilfszeile + 1][hilfsspalte - 1] = NONE;
-							//field2d[hilfszeile + 2][hilfsspalte - 2] = BLACKKING;
 							field2d[hilfszeile][hilfsspalte] = NONE;
 							hilfszeile = hilfszeile + 2;
 							hilfsspalte = hilfsspalte - 2;
@@ -414,7 +398,6 @@ best_draw[0] = '\0';
 					
 						if (can_jump_right_up(hilfszeile, hilfsspalte, WHITE)) {
 						  field2d[hilfszeile - 1][hilfsspalte + 1] = NONE;
-    					//field2d[hilfszeile - 2][hilfsspalte + 2] = BLACKKING;
     					field2d[hilfszeile][hilfsspalte] = NONE;
     					hilfszeile = hilfszeile - 2;
 							hilfsspalte = hilfsspalte + 2;
@@ -424,13 +407,11 @@ best_draw[0] = '\0';
 							strcat(draw, "x");
 							strcat(draw, buf);
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);
-							//  Züge entsprechend anfügen
 							speculate_from = strlen(draw);			
 						}
 				
 						if (can_jump_left_up(hilfszeile, hilfsspalte, WHITE)) {
 						  field2d[hilfszeile - 1][hilfsspalte - 1] = NONE;
-						//  field2d[hilfszeile - 2][hilfsspalte - 2] = BLACKKING;	
 						  field2d[hilfszeile][hilfsspalte] = NONE;
 							hilfszeile = hilfszeile - 2;
 							hilfsspalte = hilfsspalte - 2;							
@@ -442,9 +423,8 @@ best_draw[0] = '\0';
   						compare_value(&best_draw_value, &draw_value, best_draw, draw);	
 							speculate_from = strlen(draw);   
 						}
-					
 					}
-					//copy_field(original, field2d);
+					copy_field(original, field2d);
 				}
 			}
 		}	
@@ -452,16 +432,16 @@ best_draw[0] = '\0';
 }
 
 void Board::possible_draw_white() {
-int zeile;
-int hilfszeile;
-int spalte;
-int hilfsspalte;
-int best_draw_value = 0; // Wert von bestem Zug
-int draw_value; // Wert  des aktuellen Zugs
-char draw[64]; // String für aktuellen Zug, der spekulativ gemacht wird
-int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgeschnitten werden können
+	int zeile;
+	int hilfszeile;
+	int spalte;
+	int hilfsspalte;
+	int best_draw_value = 0; // Wert von bestem Zug
+	int draw_value; // Wert  des aktuellen Zugs
+	char draw[64]; // String für aktuellen Zug, der spekulativ gemacht wird
+	int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgeschnitten werden können
 
-best_draw[0] = '\0';
+	best_draw[0] = '\0';
   
 	for (zeile = 0; zeile < 8; zeile++) {	
 		for (spalte = 0; spalte < 8; spalte++) {	
@@ -509,9 +489,7 @@ best_draw[0] = '\0';
 							strcat(draw, "x");
 							strcat(draw, buf);
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);
-							//  Züge entsprechend anfügen
-							speculate_from = strlen(draw);
-						
+							speculate_from = strlen(draw);						
 						} else {
 							hilfszeile = hilfszeile - 2;
 							hilfsspalte = hilfsspalte - 2;
@@ -523,8 +501,7 @@ best_draw[0] = '\0';
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);	
 							speculate_from = strlen(draw);   
 						}		
-					}
-					 	
+					}					 	
 				}	else	{	
 					draw_value = 0;		
 					sprintf(buf, "%d", damefeld(zeile, spalte));	
@@ -561,6 +538,7 @@ best_draw[0] = '\0';
 						printf("mgl. Zug rechts für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);	
 						compare_value(&best_draw_value, &draw_value, best_draw, draw);
 					}	
+					
 					if (can_go_left_up(zeile, spalte)) {
 						draw_value = 1;
 						draw[speculate_from] = '\0';
@@ -574,10 +552,10 @@ best_draw[0] = '\0';
 					hilfszeile = zeile;
 					hilfsspalte = spalte;
 					
-				//	Field original[8][8];
-				//	copy_field(field2d, original);
+					Field original[8][8];
+					copy_field(field2d, original);
 	    		
-	    		while (can_jump_right_down(hilfszeile, hilfsspalte, BLACK) || can_jump_left_down(hilfszeile, hilfsspalte, BLACK) || can_jump_right_up(hilfszeile, hilfsspalte, BLACK)||can_jump_left_up(hilfszeile, hilfsspalte, BLACK)) {
+	    		while (can_jump_right_down(hilfszeile, hilfsspalte, BLACK) || can_jump_left_down(hilfszeile, hilfsspalte, BLACK) || can_jump_right_up(hilfszeile, hilfsspalte, BLACK) || can_jump_left_up(hilfszeile, hilfsspalte, BLACK)) {
 	    	  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte));
 	    	  	
 	    			if (can_jump_right_down(hilfszeile, hilfsspalte, BLACK)) {
@@ -590,7 +568,6 @@ best_draw[0] = '\0';
 							strcat(draw, "x");
 							strcat(draw, buf);
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);
-							// draw ab speculate_from löschen, Züge entsprechend anfügen
 							speculate_from = strlen(draw);
 						}
 						
@@ -619,7 +596,6 @@ best_draw[0] = '\0';
 							strcat(draw, "x");
 							strcat(draw, buf);
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);
-							//  Züge entsprechend anfügen
 							speculate_from = strlen(draw);			
 						}
 						
@@ -637,8 +613,8 @@ best_draw[0] = '\0';
 							speculate_from = strlen(draw);   
 						}
 					}
-					
-					//copy_field(original, field2d);
+	
+					copy_field(original, field2d);
 				}	
 			}	
 		}
@@ -647,8 +623,8 @@ best_draw[0] = '\0';
 
 
 int main(){
-char buffer[BUFFERSIZE];
-bool black;
+	char buffer[BUFFERSIZE];
+	bool black;
 
 	while (1) {
    
@@ -672,11 +648,6 @@ bool black;
       printf("Tried all possible moves for white.\n");
     }
 
-       
-        // TODO write your own player here
-
-        // send move back to MCP
-        
     printf("Sending move %s.\n", board.best_draw);
     output(board.best_draw);
   }
