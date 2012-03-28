@@ -1,6 +1,6 @@
 CXXFLAGS = -g -Wall -std=c++98 -Os
 
-TARGETS = mcp example_player my_player
+TARGETS = mcp example_player rebecca_kratsch
 
 .PHONY: all help demo run clean dist
 
@@ -20,11 +20,11 @@ h help : mcp
 d demo : mcp example_player
 	./mcp -d example_player example_player
 
-r run : mcp example_player my_player
-	./mcp -d -r0 -R0 -s10 -S11 my_player example_player
+r run : mcp example_player rebecca_kratsch						
+	./mcp -d -r0 -R0 -s10 -S11 rebecca_kratsch example_player
 
-f fight : mcp my_player
-	./mcp -t 60 -T 61 -m 1024 -M 1024 my_player my_player
+f fight : mcp rebecca_kratsch	
+	./mcp -t 60 -T 61 -m 1024 -M 1024 rebecca_kratsch rebecca_kratsch
 
 cl clean :
 	rm -f $(TARGETS) *.o

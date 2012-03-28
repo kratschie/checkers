@@ -328,7 +328,7 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 						compare_value(&best_draw_value, &draw_value, best_draw, draw);	
 						speculate_from = strlen(draw); 
 						
-						printf("was is los?\n");  
+	//					printf("was is los?\n");  
 					}	
 				}	 	
 /*			}else{
@@ -354,32 +354,73 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 				  strcat(draw, buf);  
 				  printf("mgl. Zug links für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);  
 				  compare_value(&best_draw_value, &draw_value, best_draw, draw);
+				}
+				if (can_go_right_up(zeile, spalte)){	
+					draw_value = 1;				
+					sprintf(buf, "%d", damefeld(zeile - 1, spalte + 1));
+					strcat(draw, "-");
+					strcat(draw, buf);	
+					printf("mgl. Zug rechts für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);
+					compare_value(&best_draw_value, &draw_value, best_draw, draw);
+				}
+				if (can_go_left_up(zeile, spalte)){
+					draw_value = 1;
+					draw[speculate_from] = '\0';
+				  sprintf(buf, "%d", damefeld(zeile - 1, spalte - 1));
+				  strcat(draw, "-");
+				  strcat(draw, buf);
+				  printf("mgl. Zug links für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);
+					compare_value(&best_draw_value, &draw_value, best_draw, draw);
+
 				}	
-	    	while (can_jump_right_down(zeile, spalte) || can_jump_left_down(zeile, spalte)) {
-	    	  printf("TRYING TO JUMP from (%i, %i) / %i ...%s\n", zeile, spalte, damefeld(zeile, spalte)); 
-	    		if (can_jump_right_down(zeile, spalte)){
-	    			zeile = zeile + 2;
-						spalte = spalte + 2;
+				hilfszeile = zeile;
+				hilfsspalte = spalte;
+	    	while (can_jump_right_down(hilszeile, hilfsspalte, WHITE) || can_jump_left_down(hilfszeile, hilfsspalte, WHITE) || can_jump_right_up(hilszeile, hilfsspalte, WHITE)||can_jump_left_up(hilszeile, hilfsspalte, WHITE)) {
+	    	  printf("TRYING TO JUMP from (%i, %i) / %i ...%s\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
+	    		if (can_jump_right_down(hilfszeile, hilfsspalte, WHITE)){
+	    			hilfszeile = hilfszeile + 2;
+						hilfsspalte = hilfsspalte + 2;
 						draw_value = draw_value + 2;
 						draw[speculate_from] = '\0';
-						sprintf(buf, "%d", damefeld(zeile + 2, spalte + 2));
+						sprintf(buf, "%d", damefeld(hilfszeile + 2, hilfsspalte + 2));
 						strcat(draw, "x");
 						strcat(draw, buf);
 						compare_value(&best_draw_value, &draw_value, best_draw, draw);
 						// draw ab speculate_from löschen, Züge entsprechend anfügen
 						speculate_from = strlen(draw);
 					}else{
-						zeile = zeile + 2;
-						spalte = spalte - 2;
+						if (can_jump_left_down(hilfszeile, hilfsspalte, WHITE)){
+							hilfszeile = hilfszeile + 2;
+							hilfsspalte = hilfsspalte - 2;
+							draw_value = draw_value + 2;
+							draw[speculate_from] = '\0';
+							sprintf(buf, "%d", damefeld(hilfszeile + 2, hilfsspalte - 2));
+							strcat(draw, "x");
+							strcat(draw, buf);  
+							compare_value(&best_draw_value, &draw_value, best_draw, draw);	
+							speculate_from = strlen(draw); 
+					}if (can_jump_right_up(hilfszeile, hilfsspalte, WHITE)){
+	    			hilfszeile = hilfszeile - 2;
+						hilfsspalte = hilfsspalte + 2;
+						draw_value = draw_value + 2;			
+						draw[speculate_from] = '\0';
+						sprintf(buf, "%d", damefeld(hilfszeile, hilfsspalte));
+						strcat(draw, "x");
+						strcat(draw, buf);
+						compare_value(&best_draw_value, &draw_value, best_draw, draw);
+						//  Züge entsprechend anfügen
+						speculate_from = strlen(draw);			
+					}else{
+						hilfszeile = hilfszeile - 2;
+						hilfsspalte = hilfsspalte - 2;
 						draw_value = draw_value + 2;
 						draw[speculate_from] = '\0';
-						sprintf(buf, "%d", damefeld(zeile + 2, spalte - 2));
+						sprintf(buf, "%d", damefeld(hilfszeile, hilfsspalte));
 						strcat(draw, "x");
 						strcat(draw, buf);  
 						compare_value(&best_draw_value, &draw_value, best_draw, draw);	
-						speculate_from = strlen(draw); 
-	*/		
-			}
+						speculate_from = strlen(draw);   
+			} */
 		}
 	}	
 }
@@ -449,7 +490,6 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 						strcat(draw, "x");
 						strcat(draw, buf);  
 						compare_value(&best_draw_value, &draw_value, best_draw, draw);	
-						/*turning_white_king(zeile, spalte);*/
 						speculate_from = strlen(draw);   
 					}	
 				}	 	
