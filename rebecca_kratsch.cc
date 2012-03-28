@@ -82,7 +82,7 @@ class Board
 				
 				void compare_value(int *best_draw_value, int *draw_value, char *best_draw, char *draw);
 				
-				void copy_field(Field original[8][8], Field copy[8][8]);		
+			//	void copy_field(Field original[8][8], Field copy[8][8]);		
 };
 
 void Board::from_string (char const * s) {
@@ -242,7 +242,7 @@ void Board::compare_value(int *best_draw_value, int *draw_value, char *best_draw
 	printf("Best move is now %s", best_draw);
 }
 
-void Board::copy_field(Field original[8][8], Field copy[8][8]){
+/*void Board::copy_field(Field original[8][8], Field copy[8][8]){
 	for (int zeile = 0; zeile < 8; zeile++) {
 		for (int spalte = 0; spalte < 8; spalte++) {
 			copy[zeile][spalte] = original[zeile][spalte];		
@@ -250,7 +250,7 @@ void Board::copy_field(Field original[8][8], Field copy[8][8]){
 	}
 }
 
-
+*/
 void Board::possible_draw_black() {
 int zeile;
 int hilfszeile;
@@ -374,8 +374,8 @@ best_draw[0] = '\0';
 					hilfszeile = zeile;
 					hilfsspalte = spalte;
 					
-					Field original[8][8];
-					copy_field(field2d, original);
+					//Field original[8][8];
+					//copy_field(field2d, original);
 	  	  	
     			while (can_jump_right_down(hilfszeile, hilfsspalte, WHITE) || can_jump_left_down(hilfszeile, hilfsspalte, WHITE) || can_jump_right_up(hilfszeile, hilfsspalte, WHITE)||can_jump_left_up(hilfszeile, hilfsspalte, WHITE)) {
     		  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
@@ -383,11 +383,13 @@ best_draw[0] = '\0';
     		   
     				if (can_jump_right_down(hilfszeile, hilfsspalte, WHITE)) {
     				  field2d[hilfszeile + 1][hilfsspalte + 1] = NONE;
+    				 // field2d[hilfszeile + 2][hilfsspalte + 2] = BLACKKING;
+    				  field2d[hilfszeile][hilfsspalte] = NONE;
     					hilfszeile = hilfszeile + 2;
 							hilfsspalte = hilfsspalte + 2;
 							draw_value = draw_value + 2;
 							draw[speculate_from] = '\0';
-							sprintf(buf, "%d", damefeld(hilfszeile + 2, hilfsspalte + 2));
+							sprintf(buf, "%d", damefeld(hilfszeile, hilfsspalte));
 							strcat(draw, "x");
 							strcat(draw, buf);
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);
@@ -397,11 +399,13 @@ best_draw[0] = '\0';
 					
 						if (can_jump_left_down(hilfszeile, hilfsspalte, WHITE)) {
 						  field2d[hilfszeile + 1][hilfsspalte - 1] = NONE;
+							//field2d[hilfszeile + 2][hilfsspalte - 2] = BLACKKING;
+							field2d[hilfszeile][hilfsspalte] = NONE;
 							hilfszeile = hilfszeile + 2;
 							hilfsspalte = hilfsspalte - 2;
 	  					draw_value = draw_value + 2;
 							draw[speculate_from] = '\0';
-							sprintf(buf, "%d", damefeld(hilfszeile + 2, hilfsspalte - 2));
+							sprintf(buf, "%d", damefeld(hilfszeile, hilfsspalte));
 							strcat(draw, "x");
 							strcat(draw, buf);  
 							compare_value(&best_draw_value, &draw_value, best_draw, draw);	
@@ -410,6 +414,8 @@ best_draw[0] = '\0';
 					
 						if (can_jump_right_up(hilfszeile, hilfsspalte, WHITE)) {
 						  field2d[hilfszeile - 1][hilfsspalte + 1] = NONE;
+    					//field2d[hilfszeile - 2][hilfsspalte + 2] = BLACKKING;
+    					field2d[hilfszeile][hilfsspalte] = NONE;
     					hilfszeile = hilfszeile - 2;
 							hilfsspalte = hilfsspalte + 2;
 							draw_value = draw_value + 2;			
@@ -424,8 +430,10 @@ best_draw[0] = '\0';
 				
 						if (can_jump_left_up(hilfszeile, hilfsspalte, WHITE)) {
 						  field2d[hilfszeile - 1][hilfsspalte - 1] = NONE;
+						//  field2d[hilfszeile - 2][hilfsspalte - 2] = BLACKKING;	
+						  field2d[hilfszeile][hilfsspalte] = NONE;
 							hilfszeile = hilfszeile - 2;
-							hilfsspalte = hilfsspalte - 2;
+							hilfsspalte = hilfsspalte - 2;							
 							draw_value = draw_value + 2;
 							draw[speculate_from] = '\0';
 							sprintf(buf, "%d", damefeld(hilfszeile, hilfsspalte));
@@ -436,7 +444,7 @@ best_draw[0] = '\0';
 						}
 					
 					}
-					copy_field(original, field2d);
+					//copy_field(original, field2d);
 				}
 			}
 		}	
@@ -566,8 +574,8 @@ best_draw[0] = '\0';
 					hilfszeile = zeile;
 					hilfsspalte = spalte;
 					
-					Field original[8][8];
-					copy_field(field2d, original);
+				//	Field original[8][8];
+				//	copy_field(field2d, original);
 	    		
 	    		while (can_jump_right_down(hilfszeile, hilfsspalte, BLACK) || can_jump_left_down(hilfszeile, hilfsspalte, BLACK) || can_jump_right_up(hilfszeile, hilfsspalte, BLACK)||can_jump_left_up(hilfszeile, hilfsspalte, BLACK)) {
 	    	  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte));
@@ -588,6 +596,7 @@ best_draw[0] = '\0';
 						
 						if (can_jump_left_down(hilfszeile, hilfsspalte, BLACK)) {
 							field2d[hilfszeile + 1][hilfsspalte - 1] = NONE;
+							field2d[hilfszeile][hilfsspalte] = NONE;
 							hilfszeile = hilfszeile + 2;
 							hilfsspalte = hilfsspalte - 2;
 							draw_value = draw_value + 2;
@@ -601,6 +610,7 @@ best_draw[0] = '\0';
 						
 						if (can_jump_right_up(hilfszeile, hilfsspalte, BLACK)) {
 	    				field2d[hilfszeile - 1][hilfsspalte + 1] = NONE;
+	    				field2d[hilfszeile][hilfsspalte] = NONE;
 	    				hilfszeile = hilfszeile - 2;
 							hilfsspalte = hilfsspalte + 2;
 							draw_value = draw_value + 2;			
@@ -615,6 +625,7 @@ best_draw[0] = '\0';
 						
 						if (can_jump_left_up(hilfszeile, hilfsspalte, BLACK)) {
 							field2d[hilfszeile - 1][hilfsspalte - 1] = NONE;
+							field2d[hilfszeile][hilfsspalte] = NONE;
 							hilfszeile = hilfszeile - 2;
 							hilfsspalte = hilfsspalte - 2;
 							draw_value = draw_value + 2;
@@ -627,7 +638,7 @@ best_draw[0] = '\0';
 						}
 					}
 					
-					copy_field(original, field2d);
+					//copy_field(original, field2d);
 				}	
 			}	
 		}
