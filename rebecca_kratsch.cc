@@ -379,6 +379,7 @@ best_draw[0] = '\0';
 	  	  	
     			while (can_jump_right_down(hilfszeile, hilfsspalte, WHITE) || can_jump_left_down(hilfszeile, hilfsspalte, WHITE) || can_jump_right_up(hilfszeile, hilfsspalte, WHITE)||can_jump_left_up(hilfszeile, hilfsspalte, WHITE)) {
     		  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
+    		
     		   
     				if (can_jump_right_down(hilfszeile, hilfsspalte, WHITE)) {
     				  field2d[hilfszeile + 1][hilfsspalte + 1] = NONE;
@@ -433,6 +434,7 @@ best_draw[0] = '\0';
   						compare_value(&best_draw_value, &draw_value, best_draw, draw);	
 							speculate_from = strlen(draw);   
 						}
+					
 					}
 					copy_field(original, field2d);
 				}
@@ -568,8 +570,10 @@ best_draw[0] = '\0';
 					copy_field(field2d, original);
 	    		
 	    		while (can_jump_right_down(hilfszeile, hilfsspalte, BLACK) || can_jump_left_down(hilfszeile, hilfsspalte, BLACK) || can_jump_right_up(hilfszeile, hilfsspalte, BLACK)||can_jump_left_up(hilfszeile, hilfsspalte, BLACK)) {
-	    	  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
+	    	  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte));
+	    	  	
 	    			if (can_jump_right_down(hilfszeile, hilfsspalte, BLACK)) {
+	    				field2d[hilfszeile + 1][hilfsspalte + 1] = NONE;
 	    				hilfszeile = hilfszeile + 2;
 							hilfsspalte = hilfsspalte + 2;
 							draw_value = draw_value + 2;
@@ -583,6 +587,7 @@ best_draw[0] = '\0';
 						}
 						
 						if (can_jump_left_down(hilfszeile, hilfsspalte, BLACK)) {
+							field2d[hilfszeile + 1][hilfsspalte - 1] = NONE;
 							hilfszeile = hilfszeile + 2;
 							hilfsspalte = hilfsspalte - 2;
 							draw_value = draw_value + 2;
@@ -595,6 +600,7 @@ best_draw[0] = '\0';
 						}
 						
 						if (can_jump_right_up(hilfszeile, hilfsspalte, BLACK)) {
+	    				field2d[hilfszeile - 1][hilfsspalte + 1] = NONE;
 	    				hilfszeile = hilfszeile - 2;
 							hilfsspalte = hilfsspalte + 2;
 							draw_value = draw_value + 2;			
@@ -608,6 +614,7 @@ best_draw[0] = '\0';
 						}
 						
 						if (can_jump_left_up(hilfszeile, hilfsspalte, BLACK)) {
+							field2d[hilfszeile - 1][hilfsspalte - 1] = NONE;
 							hilfszeile = hilfszeile - 2;
 							hilfsspalte = hilfsspalte - 2;
 							draw_value = draw_value + 2;

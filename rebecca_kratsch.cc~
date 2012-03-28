@@ -379,6 +379,7 @@ best_draw[0] = '\0';
 	  	  	
     			while (can_jump_right_down(hilfszeile, hilfsspalte, WHITE) || can_jump_left_down(hilfszeile, hilfsspalte, WHITE) || can_jump_right_up(hilfszeile, hilfsspalte, WHITE)||can_jump_left_up(hilfszeile, hilfsspalte, WHITE)) {
     		  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
+    		
     		   
     				if (can_jump_right_down(hilfszeile, hilfsspalte, WHITE)) {
     				  field2d[hilfszeile + 1][hilfsspalte + 1] = NONE;
@@ -433,6 +434,7 @@ best_draw[0] = '\0';
   						compare_value(&best_draw_value, &draw_value, best_draw, draw);	
 							speculate_from = strlen(draw);   
 						}
+					
 					}
 					copy_field(original, field2d);
 				}
@@ -465,7 +467,8 @@ best_draw[0] = '\0';
 					speculate_from = strlen(draw); // immer festes Startfeld  				
 					
 					if (can_go_right_up(zeile, spalte)) {	
-						draw_value = 1;				
+						draw_value = 1;	
+						draw[speculate_from] = '\0';			
 						sprintf(buf, "%d", damefeld(zeile - 1, spalte + 1));
 						strcat(draw, "-");
 						strcat(draw, buf);	
@@ -522,7 +525,8 @@ best_draw[0] = '\0';
 					speculate_from = strlen(draw); // Startfeld ist immer fest  				
 				
 					if (can_go_right_down(zeile, spalte)) {	
-						draw_value = 1;				
+						draw_value = 1;		
+						draw[speculate_from] = '\0';		
 						sprintf(buf, "%d", damefeld(zeile + 1, spalte + 1));
 						strcat(draw, "-");
 						strcat(draw, buf);	
@@ -541,7 +545,8 @@ best_draw[0] = '\0';
 					}		
 					
 					if (can_go_right_up(zeile, spalte)) {	
-						draw_value = 1;				
+						draw_value = 1;		
+						draw[speculate_from] = '\0';		
 						sprintf(buf, "%d", damefeld(zeile - 1, spalte + 1));
 						strcat(draw, "-");
 						strcat(draw, buf);	
@@ -561,11 +566,12 @@ best_draw[0] = '\0';
 					hilfszeile = zeile;
 					hilfsspalte = spalte;
 					
-					Field copy[8][8];
-					copy_field(field2d, copy);
+					Field original[8][8];
+					copy_field(field2d, original);
 	    		
 	    		while (can_jump_right_down(hilfszeile, hilfsspalte, BLACK) || can_jump_left_down(hilfszeile, hilfsspalte, BLACK) || can_jump_right_up(hilfszeile, hilfsspalte, BLACK)||can_jump_left_up(hilfszeile, hilfsspalte, BLACK)) {
-	    	  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte)); 
+	    	  	printf("TRYING TO JUMP from (%i, %i) / %i ...\n", hilfszeile, hilfsspalte, damefeld(hilfszeile, hilfsspalte));
+	    	  	
 	    			if (can_jump_right_down(hilfszeile, hilfsspalte, BLACK)) {
 	    				hilfszeile = hilfszeile + 2;
 							hilfsspalte = hilfsspalte + 2;
@@ -616,6 +622,8 @@ best_draw[0] = '\0';
 							speculate_from = strlen(draw);   
 						}
 					}
+					
+					copy_field(original, field2d);
 				}	
 			}	
 		}
