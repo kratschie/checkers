@@ -41,7 +41,7 @@ class Board
         
         Field field2d[8][8];
         
-        best_draw;
+        char best_draw;
 
         Board() { from_string ("bbbbbbbbbbbb--------wwwwwwwwwwww"); }
 
@@ -70,7 +70,7 @@ class Board
 
 				bool can_jump_left(int zeile, int spalte);
 				
-				int compare_value(int best_draw_value, int draw_value);
+				int compare_value(int *best_draw_value, int *draw_value, char best_draw[64], char draw[64]);
 };
 
 void Board::from_string (char const * s)
@@ -218,18 +218,20 @@ bool Board::can_jump_left(int zeile, int spalte){
 }
 
 // erweitern: wenn der neue Zug besser ist, muss strcpy(best_draw, draw) gemacht werden, braucht also hier noch diese Parameter
-int Board::compare_value(int best_draw_value, int draw_value){
-	if (best_draw_value < draw_value){
-						best_draw_value = draw_value;	     
+int Board::compare_value(int *best_draw_value, int *draw_value,char best_draw[64], char draw[64]){
+	if (*best_draw_value < *draw_value){
+						*best_draw_value = *draw_value;	
+									     
 	}
-
+	
+ strcpy(best_draw, draw);
 }
 
 
 void Board::possible_draw_black(){
 int zeile;
 int spalte;
-int i;
+//int i;
 /*int draw_right;
 int draw_left;
 int jump_right;
@@ -264,7 +266,7 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 						
 						printf("mgl. Zug rechts für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);
 						
-						compare_value(best_draw_value, draw_value);	
+						compare_value(&best_draw_value, &draw_value, best_draw, draw);	
 					}
 					
 					if (can_go_left(zeile, spalte)){
@@ -277,7 +279,7 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 					  
 					  printf("mgl. Zug links für (%i, %i) / %i --- %s\n", zeile, spalte, damefeld(zeile, spalte), draw);
 					  
-					  compare_value(best_draw_value, draw_value);
+					  compare_value(&best_draw_value, &draw_value, best_draw, draw);
 					}	
 		    	while (can_jump_right(zeile, spalte) || can_jump_left(zeile, spalte)) {
 		    	  printf("TRYING TO JUMP from (%i, %i) / %i ...", zeile, spalte, damefeld(zeile, spalte)); 
@@ -285,24 +287,31 @@ int speculate_from = 0; // Index, ab dem von draw evtl. auch wieder Züge abgesc
 		    			zeile = zeile + 2;
 							spalte = spalte + 2;
 							draw_value = draw_value + 2;
-							compare_value(best_draw_value, draw_value);
+							
+							draw[speculate_from] = '\0';
+							sprintf(buf, "%d", damefeld(zeile + 2, spalte + 2));
+							strcat(draw, "X");
+							strcat(draw, buf);
+							compare_value(&best_draw_value, &draw_value, best_draw, draw);
 							// draw ab speculate_from löschen (siehe oben), Züge entsprechend anfügen
-							// speculate_from = strlen(draw)
+							speculate_from = strlen(draw);
 						}else{
-							if (can_jump_left(zeile, spalte)){ // kann weg
-								zeile = zeile + 2;
-								spalte = spalte - 2;
-								draw_value = draw_value + 2;
-								compare_value(best_draw_value, draw_value);	     
+							zeile = zeile + 2;
+							spalte = spalte - 2;
+							draw_value = draw_value + 2;
+							compare_value(&best_draw_value, &draw_value, best_draw, draw);	
+							draw[speculate_from] = '\0';
+							sprintf(buf, "%d", damefeld(zeile + 2, spalte + 2));
+							strcat(draw, "X");
+							strcat(draw, buf);     
 							}	
 						}	 	
 					}
 				}
 			}	
 		}
-	}	
- 	
-//wenn w	eiß und spalte 0 bis feld >=5: gehe feld = feld - 4
+	
+//wenn weiß und spalte 0 bis feld >=5: gehe feld = feld - 4
 // wenn weiß und spalte 1bis feld  >=9 : gehe links: feld = feld -4
 // gehe rechts feld = feld -3
 // spalte 2: links: feld = feld - 5
