@@ -123,7 +123,7 @@ void Board::to_string (char * s) {
       }
 
       s[32] = 0;
-	}
+		}
 }
 
 void Board::draw() {
